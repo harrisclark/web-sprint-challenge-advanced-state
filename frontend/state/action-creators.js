@@ -20,27 +20,33 @@ export function moveCounterClockwise(int) {
   return({ type: MOVE_COUNTERCLOCKWISE, payload: int })
 }
 
-export function selectAnswer() {
-  return({ type: SET_SELECTED_ANSWER})
+export function selectAnswer(answerID) {
+  return({ type: SET_SELECTED_ANSWER, payload: answerID})
 }
 
-export function setMessage() {  }
+export function setMessage(message) {
+  return({type: SET_INFO_MESSAGE, payload: message})
+}
 
 export function setQuiz(type, payload) {
-  return({ type: type, payload: payload})
+  return({ type, payload })
 }
 
-export function inputChange() { }
+export function inputChange(id, value) {
+  return({type: INPUT_CHANGE, payload: {id, value}})
+}
 
-export function resetForm() { }
+export function resetForm() {
+  return({ type: RESET_FORM })
+}
 
 // ❗ Async action creators
 export function fetchQuiz() {
   return function (dispatch) {
-    dispatch(setQuiz("LOADING", null))
+    dispatch(setQuiz(SET_QUIZ_INTO_STATE,null))
     axios.get('http://localhost:9000/api/quiz/next')
       .then(res => {
-        //console.log('axios',res)
+        console.log('fetch quiz',res)
         dispatch(setQuiz(SET_QUIZ_INTO_STATE, res.data))
       })
       .catch(err => console.log(err))
@@ -49,16 +55,29 @@ export function fetchQuiz() {
     // - Dispatch an action to send the obtained quiz to its state
   }
 }
-export function postAnswer() {
+export function postAnswer(answer) {
   return function (dispatch) {
+    axios.post('http://localhost:9000/api/quiz/answer', answer)
+      .then(res => {
+        console.log('answer response', res.data.message)
+        dispatch(setMessage(res.data.message))
+        dispatch(fetchQuiz())
+      })
+    
     // On successful POST:
     // - Dispatch an action to reset the selected answer state
     // - Dispatch an action to set the server message to state
     // - Dispatch the fetching of the next quiz
   }
 }
-export function postQuiz() {
+export function postQuiz(quiz) {
   return function (dispatch) {
+    axios.post('http://localhost:9000/api/quiz/new', quiz)
+      .then(res => {
+        console.log('post quiz response:', res)
+        dispatch(setMessage(`Congrats: "${res.data.question}" is a great question!`))
+        dispatch(resetForm())
+      })
     // On successful POST:
     // - Dispatch the correct message to the the appropriate state
     // - Dispatch the resetting of the form

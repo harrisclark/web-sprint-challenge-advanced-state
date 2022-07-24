@@ -40,11 +40,11 @@ function Wheel(props) {
   )
 }
 
-const mapToProps = (state) => {
-  return {
-    wheel: state.wheel
-  }
-}
+// const mapToProps = (state) => {
+//   return {
+//     wheel: state.wheel
+//   }
+// }
 
 
-export default connect(mapToProps, {moveClockwise,moveCounterClockwise})(Wheel)
+export default connect(st => st, {moveClockwise,moveCounterClockwise})(Wheel)
