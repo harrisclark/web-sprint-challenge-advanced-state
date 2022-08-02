@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux';
-//import { useContext } from 'redux'
+
 import { moveClockwise, moveCounterClockwise } from '../state/action-creators'
 
 function Wheel(props) {
